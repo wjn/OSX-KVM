@@ -8,14 +8,14 @@ Building OVMF
 # Add tools and build dependencies:
 apt-get update
 apt-get install build-essential git lintian debhelper iasl nasm \
-  python uuid-dev -y
+  python3 uuid-dev -y
 
 
 git clone https://github.com/tianocore/edk2
 cd edk2
 git submodule update --init
 make -C BaseTools
-. edksetup.sh BaseTools
+source edksetup.sh BaseTools
 build -a X64 -t GCC5 -p OvmfPkg/OvmfPkgX64.dsc -b RELEASE
 
 References

@@ -32,8 +32,8 @@ else
 	echo -e "virt-manager is not installed." >&2
 fi
 
-if [ -x "$(command -v python)" ]; then
-	python --version
+if [ -x "$(command -v python3)" ]; then
+	python3 --version
 else
 	echo -e "python is not installed." >&2
 fi

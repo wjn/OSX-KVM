@@ -1,0 +1,91 @@
+<domain type="qemu">
+  <name>MacOS-Ventura</name>
+  <uuid>fe9321c8-70df-44f2-8437-f397119df98a</uuid>
+  <title>MacOS 13 Ventura</title>
+  <memory unit="KiB">4169728</memory>
+  <currentMemory unit="KiB">4169728</currentMemory>
+  <vcpu placement="static">6</vcpu>
+  <os>
+    <type arch="x86_64" machine="q35">hvm</type>
+  </os>
+  <cpu mode="host-model" match="exact" check="none">
+    <model fallback="forbid" name="Haswell-noTSX"/>
+  </cpu>
+  <clock offset="utc"/>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <emulator>/usr/bin/qemu-system-amd64</emulator>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="raw" discard="unmap"/>
+      <source file="/var/lib/libvirt/images/MacOS-Ventura.img"/>
+      <target dev="vda" bus="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x06" function="0x0"/>
+    </disk>
+    <disk type="file" device="disk">
+      <driver name="qemu" type="raw" cache="writeback"/>
+      <source file="/home/wjn/Virtualization/DiskImages/img/BaseSystem_OS15_Sequoia.img"/>
+      <target dev="sdc" bus="sata"/>
+      <boot order="3"/>
+      <address type="drive" controller="0" bus="0" target="0" unit="2"/>
+    </disk>
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <target dev="sda" bus="scsi"/>
+      <readonly/>
+      <address type="drive" controller="0" bus="0" target="0" unit="0"/>
+    </disk>
+    <controller type="scsi" index="0" model="virtio-scsi">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x03" function="0x0"/>
+    </controller>
+    <controller type="usb" index="0" model="qemu-xhci">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x04" function="0x0"/>
+    </controller>
+    <controller type="pci" index="0" model="pcie-root" name="spapr-pci-host-bridge"/>
+    <controller type="virtio-serial" index="0">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x05" function="0x0"/>
+    </controller>
+    <interface type="network">
+      <mac address="52:54:00:0d:08:ca"/>
+      <source network="default"/>
+      <model type="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x01" function="0x0"/>
+    </interface>
+    <serial type='pty'>
+      <target type='isa-serial' port='0'>
+        <model name='isa-serial'/>
+      </target>
+    </serial>
+    <channel type="unix">
+      <target type="virtio" name="org.qemu.guest_agent.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="1"/>
+    </channel>
+    <channel type="spicevmc">
+      <target type="virtio" name="com.redhat.spice.0"/>
+      <address type="virtio-serial" controller="0" bus="0" port="2"/>
+    </channel>
+    <input type="tablet" bus="usb">
+      <address type="usb" bus="0" port="1"/>
+    </input>
+    <input type="keyboard" bus="usb">
+      <address type="usb" bus="0" port="2"/>
+    </input>
+    <graphics type="spice" autoport="yes">
+      <listen type="address"/>
+      <image compression="off"/>
+    </graphics>
+    <sound model="ich6">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x0"/>
+    </sound>
+    <audio id="1" type="spice"/>
+    <video>
+      <model type="vga" vram="16384" heads="1" primary="yes"/>
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x08" function="0x0"/>
+    </video>
+    <memballoon model="virtio">
+      <address type="pci" domain="0x0000" bus="0x00" slot="0x07" function="0x0"/>
+    </memballoon>
+    <!-- <panic model="amd64"/> -->
+  </devices>
+</domain>

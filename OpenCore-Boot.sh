@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# OpenCore-Boot.sh
+#
 # Special thanks to:
 # https://github.com/Leoyzen/KVM-Opencore
 # https://github.com/thenickdude/KVM-Opencore/
@@ -32,15 +34,19 @@ REPO_PATH="."
 OVMF_DIR="."
 
 # shellcheck disable=SC2054
+
+# From Stack Overflow
+# https://stackoverflow.com/questions/54689775/how-to-fix-emulator-qemu-system-x86-64-warning-host-doesnt-support-requested
+# qemu-system-x86_64 -m 4000 -vga virtio -accel hvf -usb -device usb -tablet -drive file=ubuntu.qcow2,if=virtio -cpu host
 args=(
-  -enable-kvm -m "$ALLOCATED_RAM" -cpu Penryn,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,"$MY_OPTIONS"
+  -enable-kvm -m "$ALLOCATED_RAM" -cpu Haswell-noTSX,kvm=on,vendor=GenuineIntel,+invtsc,vmware-cpuid-freq=on,"$MY_OPTIONS"
   -machine q35
   -device qemu-xhci,id=xhci
   -device usb-kbd,bus=xhci.0 -device usb-tablet,bus=xhci.0
   -smp "$CPU_THREADS",cores="$CPU_CORES",sockets="$CPU_SOCKETS"
   -device usb-ehci,id=ehci
-  # -device usb-kbd,bus=ehci.0
-  # -device usb-mouse,bus=ehci.0
+  -device usb-kbd,bus=ehci.0
+  -device usb-mouse,bus=ehci.0
   # -device nec-usb-xhci,id=xhci
   # -global nec-usb-xhci.msi=off
   # -global ICH9-LPC.acpi-pci-hotplug-with-bridge-support=off
@@ -50,7 +56,7 @@ args=(
   -drive if=pflash,format=raw,readonly=on,file="$REPO_PATH/$OVMF_DIR/OVMF_CODE.fd"
   -drive if=pflash,format=raw,file="$REPO_PATH/$OVMF_DIR/OVMF_VARS-1920x1080.fd"
   -smbios type=2
-  -device ich9-intel-hda -device hda-duplex
+  -device ich9-amd-hda -device hda-duplex
   -device ich9-ahci,id=sata
   -drive id=OpenCoreBoot,if=none,snapshot=on,format=qcow2,file="$REPO_PATH/OpenCore/OpenCore.qcow2"
   -device ide-hd,bus=sata.2,drive=OpenCoreBoot
